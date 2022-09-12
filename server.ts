@@ -27,8 +27,13 @@ const client = new Client(dbConfig);
 client.connect();
 
 app.get("/", async (req, res) => {
-  const dbres = await client.query('select * from categories');
-  res.json(dbres.rows);
+  try {
+  const tenHighestVoted = await client.query('select * from dog_breeds order by votes desc limit 10');
+  res.json(tenHighestVoted.rows);}
+  catch(error) {
+    res.status(500).send('Sorry, error.')
+    console.error(error)
+  }
 });
 
 
