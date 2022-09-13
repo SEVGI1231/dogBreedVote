@@ -36,6 +36,32 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.post("/", async (req, res) =>  {
+  try { 
+    const {breedName}= req.body 
+    const addVote = await client.query(
+    `INSERT INTO dog_breeds(breed_name, votes) 
+    VALUES ($1, 1)
+    ON CONFLICT (breed_name)
+    DO UPDATE SET votes = dog_breeds.votes + 1`,[breedName]);
+    res.json(addVote.rows)
+  }
+  catch(error) {
+    res.status(500).send('Sorry, error.')
+    console.error(error)
+  }
+
+});
+// `DO
+// $do$
+// BEGIN
+//    IF EXISTS (SELECT * FROM dog_breeds WHERE breed_name=$1) THEN 
+//        UPDATE dog_breeds SET votes = votes + 1 WHERE breed_name=$1;
+//     ELSE
+//       INSERT INTO dog_breeds (breed_name, votes) VALUES ($1, 1);
+//     END IF;
+//     END
+//     $do$`, [breedName]);
 
 //Start the server on the given port
 const port = process.env.PORT;
