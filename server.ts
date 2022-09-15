@@ -35,6 +35,17 @@ app.get("/", async (req, res) => {
     console.error(error)
   }
 });
+app.get("/:number", async(req, res)=>{
+  try{
+    const {rowNumber}= req.params;
+    const nthDog = await client.query('select * from dog_breeds order by votes desc limit 1 offset $1', [rowNumber]);
+    res.json(nthDog.rows)
+  }
+  catch(error){
+    res.status(500).send('Sorry, error.')
+    console.error(error)
+  }
+})
 
 app.post("/", async (req, res) =>  {
   try { 
